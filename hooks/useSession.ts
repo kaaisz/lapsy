@@ -1,4 +1,5 @@
 // hooks/useSession.ts
+// セッション管理用のカスタムフック - Supabaseのセッションを取得して共通管理
 "use client"
 import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabaseClient"
