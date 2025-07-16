@@ -17,17 +17,36 @@ export default function RegisterPage() {
     setLoading(true)
     setError("")
 
-    const { error } = await supabase.auth.signUp({
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
     })
 
-    if (error) {
-      setError(error.message)
-    } else {
-      router.push("/mypage") // 登録成功後にマイページへ
+    if (signUpError) {
+      setError(signUpError.message)
+      setLoading(false)
+      return
     }
 
+    // サインアップ後にprofilesテーブルへ登録
+    const user = signUpData.user
+    if (user) {
+      const { error: insertError } = await supabase
+        .from("profiles")
+        .insert([
+          {
+            id: user.id,
+            email: user.email,
+          },
+        ])
+      if (insertError) {
+        setError("プロフィール作成に失敗しました")
+        setLoading(false)
+        return
+      }
+    }
+
+    router.push("/mypage") // 登録成功後にマイページへ遷移
     setLoading(false)
   }
 
