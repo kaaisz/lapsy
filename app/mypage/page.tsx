@@ -2,9 +2,10 @@
 "use client"
 
 import useSession from "@/hooks/useSession"
+import type { Session } from "@supabase/supabase-js"
 
 export default function MyPage() {
-  const { session, loading } = useSession()
+  const { session, loading }: { session: Session | null, loading: boolean } = useSession() as { session: Session | null, loading: boolean }
 
   if (loading) return <p>読み込み中...</p>
   if (!session) return null // layout.tsxでリダイレクトされる
