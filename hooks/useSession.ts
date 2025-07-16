@@ -3,9 +3,10 @@
 "use client"
 import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabaseClient"
+import type { Session } from "@supabase/supabase-js"
 
 export default function useSession() {
-  const [session, setSession] = useState(null)
+  const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
