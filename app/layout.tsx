@@ -9,16 +9,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const router = useRouter()
 
   useEffect(() => {
-    if (!loading && !session && pathname !== "/login") {
+    if (!loading && !session && pathname !== "/login" && pathname !== "/register") {
       router.push("/login")
     }
-    if (!loading && session && pathname === "/login") {
+    if (!loading && session && (pathname === "/login" || pathname === "/register")) {
       router.push("/mypage")
     }
   }, [session, loading, pathname, router])
 
   if (loading) return <p>Loading...</p>
-  if (!session && pathname !== "/login") return null
+  if (!session && pathname !== "/login" && pathname !== "/register") return null
 
   return <>{children}</>
 } 
