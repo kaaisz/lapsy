@@ -40,10 +40,15 @@ export default function RegisterPage() {
           },
         ])
       if (insertError) {
-        setError("プロフィール作成に失敗しました")
+        setError("プロフィール作成に失敗しました: " + insertError.message)
+        console.error(insertError)
         setLoading(false)
         return
       }
+    } else {
+      setError("ユーザー情報が取得できませんでした。メール認証が必要な場合はメールを確認してください。")
+      setLoading(false)
+      return
     }
 
     router.push("/mypage") // 登録成功後にマイページへ遷移
