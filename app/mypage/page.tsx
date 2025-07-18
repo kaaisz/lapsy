@@ -3,7 +3,7 @@
 
 import useSession from "@/hooks/useSession";
 import type { Session } from "@supabase/supabase-js";
-import Header from "@/components/Header"
+import Header from "@/components/Header";
 import { supabase } from "@/lib/supabaseClient";
 import { useEffect, useState } from "react";
 
@@ -16,37 +16,40 @@ type Post = {
   isDraft: boolean;
 };
 
-const [posts, setPosts] = useState<Post[]>([]);
-
-useEffect(() => {
-  const fetchPosts = async () => {
-    const { data, error } = await supabase
-      .from("posts")
-      .select("*")
-      .order("postDate", { ascending: false });
-
-    if (error) {
-      // エラーハンドリング
-      return;
-    }
-    setPosts(data as Post[]);
-  };
-
-  fetchPosts();
-}, []);
-
 export default function MyPage() {
   const { session, loading }: { session: Session | null, loading: boolean } = useSession() as { session: Session | null, loading: boolean };
 
-  if (loading) return <p>読み込み中...</p>
-  if (!session) return null // layout.tsxでリダイレクトされる
+  const [posts, setPosts] = useState<Post[]>([]);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const { data, error } = await supabase
+        .from("posts")
+        .select("*")
+        .order("postDate", { ascending: false });
+
+      if (error) {
+        // エラーハンドリング
+        return;
+      }
+      setPosts(data as Post[]);
+    };
+
+    fetchPosts();
+  }, []);
+
+  if (loading) return <p>読み込み中...</p>;
+  if (!session) return null;
+
   return (
     <div>
       <Header />
-      <div>
-        <h1>こんにちは、{session.user.email} さん！</h1>
-        <p>これはログイン済ユーザー専用ページです。</p>
-      </div>
+      <h1>マイページ</h1>
+      <ul>
+        {posts.map((post) => (
+          <li key={post.id}>{post.content}</li>
+        ))}
+      </ul>
     </div>
-  )
+  );
 }
