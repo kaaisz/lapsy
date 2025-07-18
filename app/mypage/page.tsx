@@ -1,8 +1,8 @@
 // 認証済ユーザー専用ページ
 "use client"
 
-import useSession from "@/hooks/useSession"
-import type { Session } from "@supabase/supabase-js"
+import useSession from "@/hooks/useSession";
+import type { Session } from "@supabase/supabase-js";
 import Header from "@/components/Header"
 import { supabase } from "@/lib/supabaseClient";
 import { useEffect, useState } from "react";
@@ -34,6 +34,9 @@ useEffect(() => {
 
   fetchPosts();
 }, []);
+
+export default function MyPage() {
+  const { session, loading }: { session: Session | null, loading: boolean } = useSession() as { session: Session | null, loading: boolean };
 
   if (loading) return <p>読み込み中...</p>
   if (!session) return null // layout.tsxでリダイレクトされる
