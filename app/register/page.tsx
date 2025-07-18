@@ -10,12 +10,14 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
+  const [info, setInfo] = useState("")
   const [loading, setLoading] = useState(false)
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError("")
+    setInfo("")
 
     const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
       email,
@@ -45,14 +47,12 @@ export default function RegisterPage() {
         setLoading(false)
         return
       }
+      router.push("/mypage") // 登録成功後にマイページへ遷移
     } else {
-      setError("ユーザー情報が取得できませんでした。メール認証が必要な場合はメールを確認してください。")
+      setInfo("登録は完了しました。認証メールを確認し、メール内のリンクをクリックしてからログインしてください。もしログインできない場合はパスワードリセットもお試しください。")
       setLoading(false)
       return
     }
-
-    router.push("/mypage") // 登録成功後にマイページへ遷移
-    setLoading(false)
   }
 
   return (
@@ -80,6 +80,7 @@ export default function RegisterPage() {
           />
         </div>
         {error && <p className="text-red-500">{error}</p>}
+        {info && <p className="text-blue-600">{info}</p>}
         <button
           type="submit"
           className="w-full bg-black text-white py-2 rounded disabled:opacity-50"
