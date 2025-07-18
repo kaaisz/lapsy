@@ -7,8 +7,15 @@ import { Label } from "./ui/label";
 import { Switch } from "./ui/switch";
 import { Badge } from "./ui/badge";
 import { ArrowLeft, Save, Calendar, Clock, FileText, AlertTriangle } from "lucide-react";
-import { Post } from "../App";
-import { useNavigate } from "react-router-dom";
+
+type Post = {
+  id: string;
+  content: string;
+  postDate: string;
+  createdAt: string;
+  updatedAt: string;
+  isDraft: boolean;
+};
 
 interface PostComposerProps {
   editingPost?: Post | null;
@@ -24,7 +31,7 @@ export function PostComposer({ editingPost, onSave, onCancel }: PostComposerProp
   const [errors, setErrors] = useState<{content?: string; date?: string}>({});
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const contentRef = useRef<HTMLTextAreaElement>(null);
   const isEditing = !!editingPost;
 
@@ -102,7 +109,7 @@ export function PostComposer({ editingPost, onSave, onCancel }: PostComposerProp
     
     const postData = {
       content: content.trim(),
-      postDate: postDateTime,
+      postDate: postDateTime.toISOString(), // ← convert to string
       isDraft
     };
 
@@ -124,9 +131,9 @@ export function PostComposer({ editingPost, onSave, onCancel }: PostComposerProp
     onCancel();
   };
 
-  const handleViewDrafts = () => {
-    navigate('/drafts');
-  };
+  // const handleViewDrafts = () => {
+  //   navigate('/drafts');
+  // };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     // Ctrl/Cmd + S to save
