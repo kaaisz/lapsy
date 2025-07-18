@@ -10,12 +10,13 @@ export default function MyPage() {
 
   if (loading) return <p>読み込み中...</p>
   if (!session) return null // layout.tsxでリダイレクトされる
-
   return (
-    <Header />
     <div>
-      <h1>こんにちは、{session.user.email} さん！</h1>
-      <p>これはログイン済ユーザー専用ページです。</p>
+      <Header />
+      <div>
+        <h1>こんにちは、{session.user.email} さん！</h1>
+        <p>これはログイン済ユーザー専用ページです。</p>
+      </div>
     </div>
   )
 }
