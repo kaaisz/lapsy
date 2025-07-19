@@ -1,7 +1,7 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "./utils"
-import { AlertCircle, CheckCircle2 } from "lucide-react@0.525.0"
+import { AlertCircle, CheckCircle2 } from "lucide-react"
 
 const inputVariants = cva(
   "flex w-full rounded-2xl border-0 bg-input-background px-4 py-3 text-base transition-all duration-200 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[44px]",
@@ -58,7 +58,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     required,
     ...props 
   }, ref) => {
-    const inputId = id || React.useId()
+    const reactId = React.useId(); // ← ここで必ず呼ぶ
+    const inputId = id ?? reactId; // ← どちらかを使う
     const helperId = `${inputId}-helper`
     const errorId = `${inputId}-error`
     
