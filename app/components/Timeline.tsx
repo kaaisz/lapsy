@@ -73,6 +73,7 @@ export function Timeline({ posts, onSelectPost }: TimelineProps) {
 
   const sortedPosts = [...posts].sort((a, b) => b.postDate.getTime() - a.postDate.getTime());
   const groupedPosts = groupPostsByDate(sortedPosts);
+  console.log("groupedPosts", groupedPosts);
 
   return (
     <div className="space-y-6 p-4 pb-8">
