@@ -55,16 +55,15 @@ const groupPostsByDate = (posts: Post[]) => {
 };
 
 export function Timeline({ posts, onSelectPost }: TimelineProps) {
-  console.log("Timeline posts", posts);
   if (posts.length === 0) {
     return (
       <div className="p-8 text-center">
         <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
           <Clock className="w-8 h-8 text-neutral-gray" />
         </div>
-        <h3 className="mb-2">まだ投稿がありません</h3>
+        <h3 className="mb-2 text-lg font-medium text-foreground">まだ投稿がありません</h3>
         <p className="text-neutral-gray text-sm">
-          右上の + ボタンから<br />
+          上の投稿フォームから<br />
           最初の投稿を作成しましょう
         </p>
       </div>
@@ -73,7 +72,6 @@ export function Timeline({ posts, onSelectPost }: TimelineProps) {
 
   const sortedPosts = [...posts].sort((a, b) => b.postDate.getTime() - a.postDate.getTime());
   const groupedPosts = groupPostsByDate(sortedPosts);
-  console.log("groupedPosts", groupedPosts);
 
   return (
     <div className="space-y-6 p-4 pb-8">
@@ -89,7 +87,7 @@ export function Timeline({ posts, onSelectPost }: TimelineProps) {
                     {getDayOfWeek(group.date)}
                   </div>
                   {/* Date circle */}
-                  <div className="w-10 h-10 rounded-full bg-neon-lime text-white flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-full bg-neon-lime text-white flex items-center justify-center shadow-sm">
                     <span className="text-sm font-medium">
                       {format(group.date, 'd')}
                     </span>
@@ -108,12 +106,12 @@ export function Timeline({ posts, onSelectPost }: TimelineProps) {
               
               {/* Post card */}
               <Card
-                className="flex-1 p-6 rounded-3xl border-0 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+                className="flex-1 p-6 rounded-2xl border shadow-sm cursor-pointer hover:shadow-md transition-all duration-200 hover:border-neon-lime/20"
                 onClick={() => onSelectPost(post)}
               >
                 <div className="mb-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <Badge variant="outline" className="rounded-full text-xs">
+                  <div className="flex items-center justify-between mb-3">
+                    <Badge variant="outline" className="rounded-full text-xs border-neon-lime/20 text-neon-lime">
                       {formatDistanceToNow(post.postDate, { 
                         addSuffix: true, 
                         locale: ja 
@@ -126,7 +124,7 @@ export function Timeline({ posts, onSelectPost }: TimelineProps) {
                       })}
                     </div>
                   </div>
-                  <p className="leading-relaxed">{post.content}</p>
+                  <p className="leading-relaxed text-foreground">{post.content}</p>
                 </div>
                 
                 {post.createdAt.getTime() !== post.updatedAt.getTime() && (

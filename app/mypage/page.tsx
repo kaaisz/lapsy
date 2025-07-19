@@ -49,26 +49,26 @@ export default function MyPage() {
     fetchPosts();
   }, []);
 
-  if (loading) return <p>読み込み中...</p>;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-neon-lime mx-auto mb-4"></div>
+            <p className="text-muted-foreground">読み込み中...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
   if (!session) return null;
-
-  // 例: 編集する投稿データ
-  // const editingPost = {
-  //   id: "1",
-  //   content: "編集する内容",
-  //   postDate: "2024-06-01T12:00:00.000Z",
-  //   createdAt: "2024-06-01T11:00:00.000Z",
-  //   updatedAt: "2024-06-01T11:30:00.000Z",
-  //   isDraft: false,
-  // };
-
-//   const handleSave = (post: Post) => {
-//     // 保存処理
-//   };
 
   const handleCancel = () => {
     // キャンセル処理
   };
+  
   const handleCreatePost = async (
     post: Omit<Post, "id" | "createdAt" | "updatedAt"> | Omit<Post, "id" | "createdAt" | "updatedAt"> & { postDate: string }
   ) => {
@@ -92,6 +92,7 @@ export default function MyPage() {
       return;
     }
     // 投稿成功時の処理（例: 投稿一覧を再取得 or 画面遷移）
+    fetchPosts();
   };
 
   const handleUpdatePost = async (post: Post) => {
@@ -132,56 +133,84 @@ export default function MyPage() {
 
   return (
     <AuthGuard>
-      <div>
+      <div className="min-h-screen bg-background">
         <Header />
-        <h1>マイページ</h1>
-        {editingPost ? (
-          <PostComposer
-            editingPost={{
-              ...editingPost!,
-              postDate: editingPost!.postDate instanceof Date ? editingPost!.postDate.toISOString() : editingPost!.postDate,
-              createdAt: editingPost!.createdAt instanceof Date ? editingPost!.createdAt.toISOString() : editingPost!.createdAt,
-              updatedAt: editingPost!.updatedAt instanceof Date ? editingPost!.updatedAt.toISOString() : editingPost!.updatedAt,
-            }}
-            onSave={(post: Omit<Post, "id" | "createdAt" | "updatedAt">) => handleUpdatePost({...post, id: editingPost!.id, createdAt: editingPost!.createdAt, updatedAt: editingPost!.updatedAt})}
-            onCancel={() => setEditingPost(null)}
-          />
-        ) : selectedPost ? (
-          <PostDetail.PostDetail
-            post={{
-              ...selectedPost,
-              postDate: selectedPost.postDate instanceof Date ? selectedPost.postDate : new Date(selectedPost.postDate),
-              createdAt: selectedPost.createdAt instanceof Date ? selectedPost.createdAt : new Date(selectedPost.createdAt), 
-              updatedAt: selectedPost.updatedAt instanceof Date ? selectedPost.updatedAt : new Date(selectedPost.updatedAt)
-            }}
-            onEdit={post => setEditingPost(post)}
-            onDelete={postId => handleDeletePost(postId)}
-            onBack={() => setSelectedPost(null)}
-          />
-        ) : (
-          <>
-            <PostComposer
-              editingPost={undefined}
-              onSave={handleCreatePost}
-              onCancel={handleCancel}
-            />
-            <ul>
-              {posts.map((post) => (
-                <li key={post.id}>{post.content}</li>
-              ))}
-            </ul>
-            {console.log("posts", posts)}
-            <Timeline
-              posts={posts.map(post => ({
-                ...post,
-                postDate: post.postDate instanceof Date ? post.postDate : new Date(post.postDate),
-                createdAt: post.createdAt instanceof Date ? post.createdAt : new Date(post.createdAt),
-                updatedAt: post.updatedAt instanceof Date ? post.updatedAt : new Date(post.updatedAt),
-              }))}
-              onSelectPost={setSelectedPost}
-            />
-          </>
-        )}
+        
+        <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {editingPost ? (
+            <div className="max-w-2xl mx-auto">
+              <PostComposer
+                editingPost={{
+                  ...editingPost!,
+                  postDate: editingPost!.postDate instanceof Date ? editingPost!.postDate.toISOString() : editingPost!.postDate,
+                  createdAt: editingPost!.createdAt instanceof Date ? editingPost!.createdAt.toISOString() : editingPost!.createdAt,
+                  updatedAt: editingPost!.updatedAt instanceof Date ? editingPost!.updatedAt.toISOString() : editingPost!.updatedAt,
+                }}
+                onSave={(post: Omit<Post, "id" | "createdAt" | "updatedAt">) => handleUpdatePost({...post, id: editingPost!.id, createdAt: editingPost!.createdAt, updatedAt: editingPost!.updatedAt})}
+                onCancel={() => setEditingPost(null)}
+              />
+            </div>
+          ) : selectedPost ? (
+            <div className="max-w-2xl mx-auto">
+              <PostDetail.PostDetail
+                post={{
+                  ...selectedPost,
+                  postDate: selectedPost.postDate instanceof Date ? selectedPost.postDate : new Date(selectedPost.postDate),
+                  createdAt: selectedPost.createdAt instanceof Date ? selectedPost.createdAt : new Date(selectedPost.createdAt), 
+                  updatedAt: selectedPost.updatedAt instanceof Date ? selectedPost.updatedAt : new Date(selectedPost.updatedAt)
+                }}
+                onEdit={post => setEditingPost(post)}
+                onDelete={postId => handleDeletePost(postId)}
+                onBack={() => setSelectedPost(null)}
+              />
+            </div>
+          ) : (
+            <div className="max-w-2xl mx-auto space-y-8">
+              <div className="text-center mb-8">
+                <h1 className="text-3xl font-bold text-foreground mb-2">
+                  マイページ
+                </h1>
+                <p className="text-muted-foreground">
+                  あなたの思いを投稿しましょう
+                </p>
+              </div>
+              
+              {/* 投稿作成フォーム */}
+              <div className="bg-card border border-border rounded-lg p-6 shadow-sm">
+                <PostComposer
+                  editingPost={undefined}
+                  onSave={handleCreatePost}
+                  onCancel={handleCancel}
+                />
+              </div>
+
+              {/* 投稿一覧（デバッグ用簡易表示） */}
+              {posts.length > 0 && (
+                <div className="bg-card border border-border rounded-lg p-4 shadow-sm">
+                  <h3 className="font-medium text-foreground mb-3">投稿一覧 ({posts.length}件)</h3>
+                  <ul className="space-y-2">
+                    {posts.map((post) => (
+                      <li key={post.id} className="text-sm text-muted-foreground truncate">
+                        {post.content}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* タイムライン */}
+              <Timeline
+                posts={posts.map(post => ({
+                  ...post,
+                  postDate: post.postDate instanceof Date ? post.postDate : new Date(post.postDate),
+                  createdAt: post.createdAt instanceof Date ? post.createdAt : new Date(post.createdAt),
+                  updatedAt: post.updatedAt instanceof Date ? post.updatedAt : new Date(post.updatedAt),
+                }))}
+                onSelectPost={setSelectedPost}
+              />
+            </div>
+          )}
+        </main>
       </div>
     </AuthGuard>
   );
