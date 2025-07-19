@@ -12,8 +12,7 @@ const Switch = React.forwardRef<
   React.ElementRef<typeof SwitchPrimitives.Root>,
   SwitchProps
 >(({ className, label, description, error, id, ...props }, ref) => {
-  const reactId = React.useId(); // ← ここで必ず呼ぶ
-  const switchId = id ?? reactId; // ← どちらかを使う
+  const switchId = id || React.useId()
   const descriptionId = `${switchId}-description`
   const errorId = `${switchId}-error`
   

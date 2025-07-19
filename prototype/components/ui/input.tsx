@@ -58,8 +58,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     required,
     ...props 
   }, ref) => {
-    const reactId = React.useId(); // ← ここで必ず呼ぶ
-    const inputId = id ?? reactId; // ← どちらかを使う
+    const inputId = id || React.useId()
     const helperId = `${inputId}-helper`
     const errorId = `${inputId}-error`
     
