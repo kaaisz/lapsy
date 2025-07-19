@@ -43,14 +43,14 @@ export default function MyPage() {
   if (!session) return null;
 
   // 例: 編集する投稿データ
-  const editingPost = {
-    id: "1",
-    content: "編集する内容",
-    postDate: "2024-06-01T12:00:00.000Z",
-    createdAt: "2024-06-01T11:00:00.000Z",
-    updatedAt: "2024-06-01T11:30:00.000Z",
-    isDraft: false,
-  };
+  // const editingPost = {
+  //   id: "1",
+  //   content: "編集する内容",
+  //   postDate: "2024-06-01T12:00:00.000Z",
+  //   createdAt: "2024-06-01T11:00:00.000Z",
+  //   updatedAt: "2024-06-01T11:30:00.000Z",
+  //   isDraft: false,
+  // };
 
 //   const handleSave = (post: Post) => {
 //     // 保存処理
