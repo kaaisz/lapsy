@@ -1,7 +1,7 @@
-@import "tailwindcss";
-/* @tailwind base;
+/* @import "tailwindcss"; */
+@tailwind base;
 @tailwind components;
-@tailwind utilities; */
+@tailwind utilities;
 
 /* 1. デフォルト（ライト）テーマ */
 :root {
@@ -192,7 +192,7 @@
 
 /* 3. Tailwindのbaseスタイルやfont-familyなど */
 body {
-  @apply bg-background text-foreground;
+  @reference bg-background text-foreground;
   font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
 }
 
