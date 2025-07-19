@@ -76,73 +76,9 @@ export function Timeline({ posts, onSelectPost }: TimelineProps) {
   console.log("groupedPosts", groupedPosts);
 
   return (
-    <div className="space-y-6 p-4 pb-8">
-    <h2>デバッグ: グループ数 {groupedPosts.length}</h2>
-      {/* {groupedPosts.map((group, groupIndex) => ( */}
-      //   <div key={group.date.getTime()} className="space-y-4">
-      //     {group.posts.map((post, postIndex) => (
-      //       <div key={post.id} className="flex gap-4 items-start">
-      //         {/* Date indicator - only show for first post of each day */}
-      //         {postIndex === 0 && (
-      //           <div className="flex flex-col items-center flex-shrink-0 mt-1">
-      //             {/* Day of week */}
-      //             <div className="text-xs text-muted-foreground mb-1">
-      //               {getDayOfWeek(group.date)}
-      //             </div>
-      //             {/* Date circle */}
-      //             <div className="w-10 h-10 rounded-full bg-neon-lime text-white flex items-center justify-center">
-      //               <span className="text-sm font-medium">
-      //                 {format(group.date, 'd')}
-      //               </span>
-      //             </div>
-      //             {/* Connecting line to next date (if not the last group) */}
-      //             {groupIndex !== groupedPosts.length - 1 && (
-      //               <div className="w-0.5 h-6 bg-border mt-2" />
-      //             )}
-      //           </div>
-      //         )}
-              
-      //         {/* Spacer for subsequent posts on the same day */}
-      //         {postIndex > 0 && (
-      //           <div className="w-10 flex-shrink-0" />
-      //         )}
-              
-      //         {/* Post card */}
-      //         <Card
-      //           className="flex-1 p-6 rounded-3xl border-0 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
-      //           onClick={() => onSelectPost(post)}
-      //         >
-      //           <div className="mb-4">
-      //             <div className="flex items-center justify-between mb-2">
-      //               <Badge variant="outline" className="rounded-full text-xs">
-      //                 {formatDistanceToNow(post.postDate, { 
-      //                   addSuffix: true, 
-      //                   locale: ja 
-      //                 })}
-      //               </Badge>
-      //               <div className="text-xs text-neutral-gray">
-      //                 {post.postDate.toLocaleTimeString('ja-JP', {
-      //                   hour: '2-digit',
-      //                   minute: '2-digit'
-      //                 })}
-      //               </div>
-      //             </div>
-      //             <p className="leading-relaxed">{post.content}</p>
-      //           </div>
-                
-      //           {post.createdAt.getTime() !== post.updatedAt.getTime() && (
-      //             <div className="text-xs text-neutral-gray flex items-center">
-      //               <div className="w-1 h-1 rounded-full bg-salmon-pink mr-2"></div>
-      //               編集済み
-      //             </div>
-      //           )}
-      //         </Card>
-      //       </div>
-      //     ))}
-      //   </div>
-      // ))}
-      
-      {groupedPosts.map((group, _groupIndex) => (
+    <div>
+      <h2>デバッグ: グループ数 {groupedPosts.length}</h2>
+      {groupedPosts.map((group, groupIndex) => (
         <div key={group.date.toISOString()}>
           <h3>{group.date.toLocaleDateString()} の投稿</h3>
           <ul>
