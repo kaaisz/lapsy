@@ -1,4 +1,4 @@
-// import { Card } from "./ui/card";
+import { Card } from "./ui/card";
 // import { Badge } from "./ui/badge";
 // import { formatDistanceToNow, format, isSameDay } from "date-fns";
 // import { ja } from "date-fns/locale";
@@ -55,7 +55,7 @@ const groupPostsByDate = (posts: Post[]) => {
   return groups;
 };
 
-export function Timeline({ posts }: TimelineProps) {
+export function Timeline({ posts, onSelectPost }: TimelineProps) {
   console.log("Timeline posts", posts);
   if (posts.length === 0) {
     return (
@@ -82,11 +82,17 @@ export function Timeline({ posts }: TimelineProps) {
       {groupedPosts.map((group) => (
         <div key={group.date.toISOString()}>
           <h3>{group.date.toLocaleDateString()} の投稿</h3>
-          <ul>
+          <div className="space-y-4">
             {group.posts.map(post => (
-              <li key={post.id}>{post.content}</li>
+              <Card
+                key={post.id}
+                className="p-6 cursor-pointer hover:shadow-md transition-shadow"
+                onClick={() => onSelectPost(post)}
+              >
+                <p>{post.content}</p>
+              </Card>
             ))}
-          </ul>
+          </div>
         </div>
       ))}
     </div>
