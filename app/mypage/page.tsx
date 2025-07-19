@@ -60,21 +60,23 @@ export default function MyPage() {
     // キャンセル処理
   };
 
-  const handleCreatePost = async (postData) => {
+  const handleCreatePost = async (postData: Post | Omit<Post, "id" | "createdAt" | "updatedAt">) => {
+    // Fill in missing fields if needed
+    const now = new Date().toISOString();
+    const post: Omit<Post, "id"> = {
+      ...postData,
+      createdAt: now,
+      updatedAt: now,
+    };
+
     const { error } = await supabase
       .from("posts")
-      .insert([
-        {
-          ...postData,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        }
-      ]);
+      .insert([post]);
     if (error) {
       alert("投稿に失敗しました: " + error.message);
       return;
     }
-    fetchPosts(); // 投稿後に一覧を更新
+    // 投稿成功時の処理
   };
 
   return (
@@ -83,9 +85,8 @@ export default function MyPage() {
       <h1>マイページ</h1>
       <PostComposer
         editingPost={editingPost}
-        // onSave={handleSave}
-        onCancel={handleCancel}
         onSave={handleCreatePost}
+        onCancel={handleCancel}
       />
       <ul>
         {posts.map((post) => (
