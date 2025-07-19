@@ -61,22 +61,21 @@ export default function MyPage() {
   };
 
   const handleCreatePost = async (postData: Post | Omit<Post, "id" | "createdAt" | "updatedAt">) => {
-    // Fill in missing fields if needed
-    const now = new Date().toISOString();
-    const post: Omit<Post, "id"> = {
-      ...postData,
-      createdAt: now,
-      updatedAt: now,
-    };
-
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("posts")
-      .insert([post]);
+      .insert([
+        {
+          ...postData,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        }
+      ]);
     if (error) {
+      // エラーハンドリング
       alert("投稿に失敗しました: " + error.message);
       return;
     }
-    // 投稿成功時の処理
+    // 投稿成功時の処理（例: 投稿一覧を再取得 or 画面遷移）
   };
 
   return (
