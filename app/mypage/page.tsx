@@ -104,8 +104,8 @@ export default function MyPage() {
             createdAt: selectedPost.createdAt instanceof Date ? selectedPost.createdAt : new Date(selectedPost.createdAt), 
             updatedAt: selectedPost.updatedAt instanceof Date ? selectedPost.updatedAt : new Date(selectedPost.updatedAt)
           }}
-          onEdit={(post) => {/* 編集機能は後で実装 */}}
-          onDelete={(postId) => {/* 削除機能は後で実装 */}}
+          onEdit={( /* post */ ) => {/* 編集機能は後で実装 */}}
+          onDelete={( /* postId */ ) => {/* 削除機能は後で実装 */}}
           onBack={() => setSelectedPost(null)}
         />
       ) : (
