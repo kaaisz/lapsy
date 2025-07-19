@@ -114,6 +114,21 @@ export default function MyPage() {
     fetchPosts();
   };
 
+  const handleDeletePost = async (postId: string) => {
+    const { error } = await supabase
+      .from("posts")
+      .delete()
+      .eq("id", postId);
+
+    if (error) {
+      alert("削除に失敗しました: " + error.message);
+      return;
+    }
+    setSelectedPost(null); // 詳細画面を閉じる
+    setEditingPost(null);  // 編集画面も閉じる（念のため）
+    fetchPosts();          // 投稿一覧を再取得
+  };
+
   return (
     <div>
       <Header />
@@ -138,7 +153,7 @@ export default function MyPage() {
             updatedAt: selectedPost.updatedAt instanceof Date ? selectedPost.updatedAt : new Date(selectedPost.updatedAt)
           }}
           onEdit={post => setEditingPost(post)}
-          onDelete={( /* postId */ ) => {/* 削除機能は後で実装 */}}
+          onDelete={postId => handleDeletePost(postId)}
           onBack={() => setSelectedPost(null)}
         />
       ) : (
