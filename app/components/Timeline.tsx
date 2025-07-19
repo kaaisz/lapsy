@@ -19,10 +19,10 @@ interface TimelineProps {
 }
 
 // Helper function to get day of week in Japanese
-// const getDayOfWeek = (date: Date): string => {
-//   const days = ['日', '月', '火', '水', '木', '金', '土'];
-//   return days[date.getDay()];
-// };
+const getDayOfWeek = (date: Date): string => {
+  const days = ['日', '月', '火', '水', '木', '金', '土'];
+  return days[date.getDay()];
+};
 
 // Helper function to group posts by date
 const groupPostsByDate = (posts: Post[]) => {
@@ -77,15 +77,38 @@ export function Timeline({ posts, onSelectPost }: TimelineProps) {
 
   return (
     <div className="space-y-6 p-4 pb-8">
-      <h2>デバッグ: グループ数 {groupedPosts.length}</h2>
-      {groupedPosts.map((group) => (
-        <div key={group.date.toISOString()}>
-          <h3>{group.date.toLocaleDateString()} の投稿</h3>
-          <div className="space-y-4">
-            {group.posts.map(post => (
+      {groupedPosts.map((group, groupIndex) => (
+        <div key={group.date.getTime()} className="space-y-4">
+          {group.posts.map((post, postIndex) => (
+            <div key={post.id} className="flex gap-4 items-start">
+              {/* Date indicator - only show for first post of each day */}
+              {postIndex === 0 && (
+                <div className="flex flex-col items-center flex-shrink-0 mt-1">
+                  {/* Day of week */}
+                  <div className="text-xs text-muted-foreground mb-1">
+                    {getDayOfWeek(group.date)}
+                  </div>
+                  {/* Date circle */}
+                  <div className="w-10 h-10 rounded-full bg-neon-lime text-white flex items-center justify-center">
+                    <span className="text-sm font-medium">
+                      {format(group.date, 'd')}
+                    </span>
+                  </div>
+                  {/* Connecting line to next date (if not the last group) */}
+                  {groupIndex !== groupedPosts.length - 1 && (
+                    <div className="w-0.5 h-6 bg-border mt-2" />
+                  )}
+                </div>
+              )}
+              
+              {/* Spacer for subsequent posts on the same day */}
+              {postIndex > 0 && (
+                <div className="w-10 flex-shrink-0" />
+              )}
+              
+              {/* Post card */}
               <Card
-                key={post.id}
-                className="p-6 cursor-pointer hover:shadow-md transition-shadow"
+                className="flex-1 p-6 rounded-3xl border-0 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
                 onClick={() => onSelectPost(post)}
               >
                 <div className="mb-4">
@@ -113,8 +136,8 @@ export function Timeline({ posts, onSelectPost }: TimelineProps) {
                   </div>
                 )}
               </Card>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       ))}
     </div>
