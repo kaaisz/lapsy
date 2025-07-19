@@ -170,6 +170,7 @@ export default function MyPage() {
                 <li key={post.id}>{post.content}</li>
               ))}
             </ul>
+            console.log("posts", posts);
             <Timeline
               posts={posts.map(post => ({
                 ...post,
