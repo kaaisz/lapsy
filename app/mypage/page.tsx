@@ -12,9 +12,9 @@ import { PostComposer } from "@/app/components/PostComposer";
 type Post = {
   id: string;
   content: string;
-  postDate: Date;
-  createdAt: Date;
-  updatedAt: Date;
+  postDate: string | Date;
+  createdAt: string | Date;
+  updatedAt: string | Date;
   isDraft: boolean;
 };  
 
@@ -65,16 +65,23 @@ export default function MyPage() {
   const handleCancel = () => {
     // キャンセル処理
   };
-  const handleCreatePost = async (post: Omit<Post, "id" | "createdAt" | "updatedAt">) => {
-    const { error } = await supabase
-      .from("posts")
-      .insert([
-        {
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          ...post,
-        }
-      ]);
+  const handleCreatePost = async (
+    post: Omit<Post, "id" | "createdAt" | "updatedAt"> | Omit<Post, "id" | "createdAt" | "updatedAt"> & { postDate: string }
+  ) => {
+    // postDateがstringならDateに変換
+    const postDate =
+      typeof post.postDate === "string"
+        ? new Date(post.postDate)
+        : post.postDate;
+
+    const { error } = await supabase.from("posts").insert([
+      {
+        ...post,
+        postDate,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ]);
     if (error) {
       // エラーハンドリング
       alert("投稿に失敗しました: " + error.message);
@@ -98,8 +105,13 @@ export default function MyPage() {
         ))}
       </ul>
       <Timeline
-        posts={posts}
-        onSelectPost={(post) => alert(post.content)} // 詳細表示は後で拡張
+        posts={posts.map(post => ({
+          ...post,
+          postDate: post.postDate instanceof Date ? post.postDate : new Date(post.postDate),
+          createdAt: post.createdAt instanceof Date ? post.createdAt : new Date(post.createdAt),
+          updatedAt: post.updatedAt instanceof Date ? post.updatedAt : new Date(post.updatedAt),
+        }))}
+        onSelectPost={(post) => alert(post.content)}
       />
     </div>
   );
