@@ -24,6 +24,7 @@ export default function MyPage() {
 
   const [posts, setPosts] = useState<Post[]>([]);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const [editingPost, setEditingPost] = useState<Post | null>(null);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -92,11 +93,49 @@ export default function MyPage() {
     // 投稿成功時の処理（例: 投稿一覧を再取得 or 画面遷移）
   };
 
+  const handleUpdatePost = async (
+    post: Post | Omit<Post, "id" | "createdAt" | "updatedAt">
+  ) => {
+    // id, createdAt, updatedAtがなければ編集できないのでガード
+    if (!("id" in post)) {
+      alert("IDがありません。");
+      return;
+    }
+    const { id, ...updateFields } = post;
+    const { error } = await supabase
+      .from("posts")
+      .update({
+        ...updateFields,
+        updatedAt: new Date(),
+      })
+      .eq("id", id);
+
+    if (error) {
+      alert("更新に失敗しました: " + error.message);
+      return;
+    }
+    setEditingPost(null);
+    setSelectedPost(null);
+    // 投稿一覧を再取得
+    // fetchPosts(); ← 必要なら再取得関数を呼ぶ
+  };
+
   return (
     <div>
       <Header />
       <h1>マイページ</h1>
-      {selectedPost ? (
+      {editingPost ? (
+        <PostComposer
+          editingPost={{
+            ...editingPost,
+            postDate: typeof editingPost.postDate === "string" ? editingPost.postDate : editingPost.postDate.toISOString(),
+            createdAt: typeof editingPost.createdAt === "string" ? editingPost.createdAt : editingPost.createdAt.toISOString(),
+            updatedAt: typeof editingPost.updatedAt === "string" ? editingPost.updatedAt : editingPost.updatedAt.toISOString(),
+          }}
+          onSave={handleUpdatePost}
+          onCancel={() => setEditingPost(null)}
+        />
+      ) : selectedPost ? (
         <PostDetail.PostDetail
           post={{
             ...selectedPost,
