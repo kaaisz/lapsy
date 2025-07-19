@@ -82,7 +82,7 @@ export default function MyPage() {
       <Header />
       <h1>マイページ</h1>
       <PostComposer
-        editingPost={editingPost}
+        editingPost={undefined} // ← ここをundefinedまたはnullにする
         onSave={handleCreatePost}
         onCancel={handleCancel}
       />
