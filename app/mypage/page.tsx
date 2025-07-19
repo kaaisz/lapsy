@@ -6,6 +6,7 @@ import type { Session } from "@supabase/supabase-js";
 import Header from "@/components/Header";
 import { supabase } from "@/lib/supabaseClient";
 import { useEffect, useState } from "react";
+import { PostComposer } from "@/app/components/PostComposer";
 
 type Post = {
   id: string;
@@ -14,7 +15,7 @@ type Post = {
   createdAt: string;
   updatedAt: string;
   isDraft: boolean;
-};
+};  
 
 export default function MyPage() {
   const { session, loading }: { session: Session | null, loading: boolean } = useSession() as { session: Session | null, loading: boolean };
@@ -41,10 +42,51 @@ export default function MyPage() {
   if (loading) return <p>読み込み中...</p>;
   if (!session) return null;
 
+  // 例: 編集する投稿データ
+  const editingPost = {
+    id: "1",
+    content: "編集する内容",
+    postDate: "2024-06-01T12:00:00.000Z",
+    createdAt: "2024-06-01T11:00:00.000Z",
+    updatedAt: "2024-06-01T11:30:00.000Z",
+    isDraft: false,
+  };
+
+//   const handleSave = (post: Post) => {
+//     // 保存処理
+//   };
+
+  const handleCancel = () => {
+    // キャンセル処理
+  };
+
+  const handleCreatePost = async (postData) => {
+    const { error } = await supabase
+      .from("posts")
+      .insert([
+        {
+          ...postData,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        }
+      ]);
+    if (error) {
+      alert("投稿に失敗しました: " + error.message);
+      return;
+    }
+    fetchPosts(); // 投稿後に一覧を更新
+  };
+
   return (
     <div>
       <Header />
       <h1>マイページ</h1>
+      <PostComposer
+        editingPost={editingPost}
+        // onSave={handleSave}
+        onCancel={handleCancel}
+        onSave={handleCreatePost}
+      />
       <ul>
         {posts.map((post) => (
           <li key={post.id}>{post.content}</li>
