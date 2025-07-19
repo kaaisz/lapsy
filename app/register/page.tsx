@@ -1,6 +1,6 @@
 // 新規登録画面
 "use client"
-
+import AuthGuard from "../components/AuthGuard";
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabaseClient"
@@ -56,39 +56,41 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-4 border rounded">
-      <h1 className="text-xl font-bold mb-4">新規登録</h1>
-      <form onSubmit={handleRegister} className="space-y-4">
-        <div>
-          <label className="block mb-1">メールアドレス</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full border px-3 py-2 rounded"
-            required
-          />
-        </div>
-        <div>
-          <label className="block mb-1">パスワード</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full border px-3 py-2 rounded"
-            required
-          />
-        </div>
-        {error && <p className="text-red-500">{error}</p>}
-        {info && <p className="text-blue-600">{info}</p>}
-        <button
-          type="submit"
-          className="w-full bg-black text-white py-2 rounded disabled:opacity-50"
-          disabled={loading}
-        >
-          {loading ? "登録中..." : "新規登録"}
-        </button>
-      </form>
-    </div>
+    <AuthGuard>
+      <div className="max-w-md mx-auto mt-10 p-4 border rounded">
+        <h1 className="text-xl font-bold mb-4">新規登録</h1>
+        <form onSubmit={handleRegister} className="space-y-4">
+          <div>
+            <label className="block mb-1">メールアドレス</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full border px-3 py-2 rounded"
+              required
+            />
+          </div>
+          <div>
+            <label className="block mb-1">パスワード</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full border px-3 py-2 rounded"
+              required
+            />
+          </div>
+          {error && <p className="text-red-500">{error}</p>}
+          {info && <p className="text-blue-600">{info}</p>}
+          <button
+            type="submit"
+            className="w-full bg-black text-white py-2 rounded disabled:opacity-50"
+            disabled={loading}
+          >
+            {loading ? "登録中..." : "新規登録"}
+          </button>
+        </form>
+      </div>
+    </AuthGuard>
   )
 } 

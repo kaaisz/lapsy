@@ -1,6 +1,6 @@
 // 認証済ユーザー専用ページ
 "use client"
-
+import AuthGuard from "../components/AuthGuard";
 import useSession from "@/hooks/useSession";
 import type { Session } from "@supabase/supabase-js";
 import Header from "@/components/Header";
@@ -131,55 +131,57 @@ export default function MyPage() {
   };
 
   return (
-    <div>
-      <Header />
-      <h1>マイページ</h1>
-      {editingPost ? (
-        <PostComposer
-          editingPost={{
-            ...editingPost!,
-            postDate: editingPost!.postDate instanceof Date ? editingPost!.postDate.toISOString() : editingPost!.postDate,
-            createdAt: editingPost!.createdAt instanceof Date ? editingPost!.createdAt.toISOString() : editingPost!.createdAt,
-            updatedAt: editingPost!.updatedAt instanceof Date ? editingPost!.updatedAt.toISOString() : editingPost!.updatedAt,
-          }}
-          onSave={(post: Omit<Post, "id" | "createdAt" | "updatedAt">) => handleUpdatePost({...post, id: editingPost!.id, createdAt: editingPost!.createdAt, updatedAt: editingPost!.updatedAt})}
-          onCancel={() => setEditingPost(null)}
-        />
-      ) : selectedPost ? (
-        <PostDetail.PostDetail
-          post={{
-            ...selectedPost,
-            postDate: selectedPost.postDate instanceof Date ? selectedPost.postDate : new Date(selectedPost.postDate),
-            createdAt: selectedPost.createdAt instanceof Date ? selectedPost.createdAt : new Date(selectedPost.createdAt), 
-            updatedAt: selectedPost.updatedAt instanceof Date ? selectedPost.updatedAt : new Date(selectedPost.updatedAt)
-          }}
-          onEdit={post => setEditingPost(post)}
-          onDelete={postId => handleDeletePost(postId)}
-          onBack={() => setSelectedPost(null)}
-        />
-      ) : (
-        <>
+    <AuthGuard>
+      <div>
+        <Header />
+        <h1>マイページ</h1>
+        {editingPost ? (
           <PostComposer
-            editingPost={undefined}
-            onSave={handleCreatePost}
-            onCancel={handleCancel}
+            editingPost={{
+              ...editingPost!,
+              postDate: editingPost!.postDate instanceof Date ? editingPost!.postDate.toISOString() : editingPost!.postDate,
+              createdAt: editingPost!.createdAt instanceof Date ? editingPost!.createdAt.toISOString() : editingPost!.createdAt,
+              updatedAt: editingPost!.updatedAt instanceof Date ? editingPost!.updatedAt.toISOString() : editingPost!.updatedAt,
+            }}
+            onSave={(post: Omit<Post, "id" | "createdAt" | "updatedAt">) => handleUpdatePost({...post, id: editingPost!.id, createdAt: editingPost!.createdAt, updatedAt: editingPost!.updatedAt})}
+            onCancel={() => setEditingPost(null)}
           />
-          <ul>
-            {posts.map((post) => (
-              <li key={post.id}>{post.content}</li>
-            ))}
-          </ul>
-          <Timeline
-            posts={posts.map(post => ({
-              ...post,
-              postDate: post.postDate instanceof Date ? post.postDate : new Date(post.postDate),
-              createdAt: post.createdAt instanceof Date ? post.createdAt : new Date(post.createdAt),
-              updatedAt: post.updatedAt instanceof Date ? post.updatedAt : new Date(post.updatedAt),
-            }))}
-            onSelectPost={setSelectedPost}
+        ) : selectedPost ? (
+          <PostDetail.PostDetail
+            post={{
+              ...selectedPost,
+              postDate: selectedPost.postDate instanceof Date ? selectedPost.postDate : new Date(selectedPost.postDate),
+              createdAt: selectedPost.createdAt instanceof Date ? selectedPost.createdAt : new Date(selectedPost.createdAt), 
+              updatedAt: selectedPost.updatedAt instanceof Date ? selectedPost.updatedAt : new Date(selectedPost.updatedAt)
+            }}
+            onEdit={post => setEditingPost(post)}
+            onDelete={postId => handleDeletePost(postId)}
+            onBack={() => setSelectedPost(null)}
           />
-        </>
-      )}
-    </div>
+        ) : (
+          <>
+            <PostComposer
+              editingPost={undefined}
+              onSave={handleCreatePost}
+              onCancel={handleCancel}
+            />
+            <ul>
+              {posts.map((post) => (
+                <li key={post.id}>{post.content}</li>
+              ))}
+            </ul>
+            <Timeline
+              posts={posts.map(post => ({
+                ...post,
+                postDate: post.postDate instanceof Date ? post.postDate : new Date(post.postDate),
+                createdAt: post.createdAt instanceof Date ? post.createdAt : new Date(post.createdAt),
+                updatedAt: post.updatedAt instanceof Date ? post.updatedAt : new Date(post.updatedAt),
+              }))}
+              onSelectPost={setSelectedPost}
+            />
+          </>
+        )}
+      </div>
+    </AuthGuard>
   );
 }
