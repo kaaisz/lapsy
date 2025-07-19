@@ -1,7 +1,8 @@
-import { Card } from "./ui/card";
-import { Badge } from "./ui/badge";
-import { formatDistanceToNow, format, isSameDay } from "date-fns";
-import { ja } from "date-fns/locale";
+// import { Card } from "./ui/card";
+// import { Badge } from "./ui/badge";
+// import { formatDistanceToNow, format, isSameDay } from "date-fns";
+// import { ja } from "date-fns/locale";
+import { isSameDay } from "date-fns";
 import { Clock } from "lucide-react";
 type Post = {
   id: string;
@@ -19,10 +20,10 @@ interface TimelineProps {
 }
 
 // Helper function to get day of week in Japanese
-const getDayOfWeek = (date: Date): string => {
-  const days = ['日', '月', '火', '水', '木', '金', '土'];
-  return days[date.getDay()];
-};
+// const getDayOfWeek = (date: Date): string => {
+//   const days = ['日', '月', '火', '水', '木', '金', '土'];
+//   return days[date.getDay()];
+// };
 
 // Helper function to group posts by date
 const groupPostsByDate = (posts: Post[]) => {
@@ -54,7 +55,7 @@ const groupPostsByDate = (posts: Post[]) => {
   return groups;
 };
 
-export function Timeline({ posts, onSelectPost }: TimelineProps) {
+export function Timeline({ posts }: TimelineProps) {
   console.log("Timeline posts", posts);
   if (posts.length === 0) {
     return (
@@ -76,9 +77,9 @@ export function Timeline({ posts, onSelectPost }: TimelineProps) {
   console.log("groupedPosts", groupedPosts);
 
   return (
-    <div>
+    <div className="space-y-6 p-4 pb-8">
       <h2>デバッグ: グループ数 {groupedPosts.length}</h2>
-      {groupedPosts.map((group, groupIndex) => (
+      {groupedPosts.map((group) => (
         <div key={group.date.toISOString()}>
           <h3>{group.date.toLocaleDateString()} の投稿</h3>
           <ul>
