@@ -1,4 +1,5 @@
 "use client"
+import "../styles/globals.css";
 import useSession from "@/hooks/useSession"
 import { usePathname, useRouter } from "next/navigation"
 import { useEffect } from "react"
