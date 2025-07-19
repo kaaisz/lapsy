@@ -1,9 +1,20 @@
 import { Card } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { Post } from "../App";
 import { formatDistanceToNow, format, isSameDay } from "date-fns";
 import { ja } from "date-fns/locale";
 import { Clock } from "lucide-react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabaseClient";
+
+type Post = {
+  id: string;
+  content: string;
+  postDate: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  isDraft: boolean;
+};
+export default Post;
 
 interface TimelineProps {
   posts: Post[];

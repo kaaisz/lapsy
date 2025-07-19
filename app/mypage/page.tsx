@@ -4,6 +4,7 @@
 import useSession from "@/hooks/useSession";
 import type { Session } from "@supabase/supabase-js";
 import Header from "@/components/Header";
+import { Timeline } from "@/app/components/Timeline";
 import { supabase } from "@/lib/supabaseClient";
 import { useEffect, useState } from "react";
 import { PostComposer } from "@/app/components/PostComposer";
@@ -11,9 +12,9 @@ import { PostComposer } from "@/app/components/PostComposer";
 type Post = {
   id: string;
   content: string;
-  postDate: string;
-  createdAt: string;
-  updatedAt: string;
+  postDate: Date;
+  createdAt: Date;
+  updatedAt: Date;
   isDraft: boolean;
 };  
 
@@ -29,11 +30,16 @@ export default function MyPage() {
         .select("*")
         .order("postDate", { ascending: false });
 
-      if (error) {
-        // エラーハンドリング
-        return;
-      }
-      setPosts(data as Post[]);
+      if (error) return;
+
+      // ここでDate型に変換
+      const postsWithDate = (data as Post[]).map(post => ({
+        ...post,
+        postDate: new Date(post.postDate),
+        createdAt: new Date(post.createdAt),
+        updatedAt: new Date(post.updatedAt),
+      }));
+      setPosts(postsWithDate);
     };
 
     fetchPosts();
@@ -91,6 +97,10 @@ export default function MyPage() {
           <li key={post.id}>{post.content}</li>
         ))}
       </ul>
+      <Timeline
+        posts={posts}
+        onSelectPost={(post) => alert(post.content)} // 詳細表示は後で拡張
+      />
     </div>
   );
 }
