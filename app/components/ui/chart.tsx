@@ -150,7 +150,7 @@ function ChartTooltipContent({
 }: ChartTooltipContentProps): React.JSX.Element | null {
   const { config } = useChart();
 
-  const safePayload = Array.isArray(payload) ? payload : [];
+  const safePayload = React.useMemo(() => (Array.isArray(payload) ? payload : []), [payload]);
   const tooltipLabel = React.useMemo(() => {
     if (hideLabel || !safePayload.length) {
       return null;
@@ -261,11 +261,6 @@ function ChartTooltipContent({
 
 const ChartLegend = RechartsPrimitive.Legend;
 
-type LegendPayloadItem = {
-  value: string;
-  color?: string;
-  dataKey?: string;
-};
 type ChartLegendContentProps = {
   className?: string;
   hideIcon?: boolean;
