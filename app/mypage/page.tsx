@@ -59,16 +59,14 @@ export default function MyPage() {
   const handleCancel = () => {
     // キャンセル処理
   };
-
-  const handleCreatePost = async (postData: Post | Omit<Post, "id" | "createdAt" | "updatedAt">) => {
-    // const { data, error } = await supabase
+  const handleCreatePost = async (post: Omit<Post, "id" | "createdAt" | "updatedAt">) => {
     const { error } = await supabase
       .from("posts")
       .insert([
         {
-          ...postData,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
+          ...post,
         }
       ]);
     if (error) {
