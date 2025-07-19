@@ -121,6 +121,7 @@ export default function MyPage() {
       .eq("id", postId);
 
     if (error) {
+      console.log("delete error", error);
       alert("削除に失敗しました: " + error.message);
       return;
     }
