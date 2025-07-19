@@ -55,6 +55,7 @@ const groupPostsByDate = (posts: Post[]) => {
 };
 
 export function Timeline({ posts, onSelectPost }: TimelineProps) {
+  console.log("Timeline posts", posts);
   if (posts.length === 0) {
     return (
       <div className="p-8 text-center">
