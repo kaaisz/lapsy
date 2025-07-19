@@ -121,16 +121,12 @@ export default function MyPage() {
       {editingPost ? (
         <PostComposer
           editingPost={{
-            ...editingPost,
-            postDate: editingPost.postDate instanceof Date ? editingPost.postDate.toISOString() : editingPost.postDate,
-            createdAt: editingPost.createdAt instanceof Date ? editingPost.createdAt.toISOString() : editingPost.createdAt,
-            updatedAt: editingPost.updatedAt instanceof Date ? editingPost.updatedAt.toISOString() : editingPost.updatedAt
+            ...editingPost!,
+            postDate: editingPost!.postDate instanceof Date ? editingPost!.postDate.toISOString() : editingPost!.postDate,
+            createdAt: editingPost!.createdAt instanceof Date ? editingPost!.createdAt.toISOString() : editingPost!.createdAt,
+            updatedAt: editingPost!.updatedAt instanceof Date ? editingPost!.updatedAt.toISOString() : editingPost!.updatedAt,
           }}
-          onSave={async (post) => {
-            if ('id' in post) {
-              await handleUpdatePost(post as Post);
-            }
-          }}
+          onSave={(post: Omit<Post, "id" | "createdAt" | "updatedAt">) => handleUpdatePost({...post, id: editingPost!.id, createdAt: editingPost!.createdAt, updatedAt: editingPost!.updatedAt})}
           onCancel={() => setEditingPost(null)}
         />
       ) : selectedPost ? (
