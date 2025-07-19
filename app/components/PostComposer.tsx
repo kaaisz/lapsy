@@ -207,7 +207,7 @@ export function PostComposer({ editingPost, onSave, onCancel }: PostComposerProp
           <Card className="p-4 rounded-3xl border-0 shadow-sm">
             <Button
               variant="outline"
-              onClick={handleViewDrafts}
+              // onClick={handleViewDrafts}
               className="w-full rounded-2xl h-12"
               aria-describedby="drafts-button-help"
             >
