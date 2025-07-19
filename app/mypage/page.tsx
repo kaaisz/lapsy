@@ -26,25 +26,26 @@ export default function MyPage() {
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [editingPost, setEditingPost] = useState<Post | null>(null);
 
+  // useEffectの外で定義
+  const fetchPosts = async () => {
+    const { data, error } = await supabase
+      .from("posts")
+      .select("*")
+      .order("postDate", { ascending: false });
+
+    if (error) return;
+
+    const postsWithDate = (data as Post[]).map(post => ({
+      ...post,
+      postDate: new Date(post.postDate),
+      createdAt: new Date(post.createdAt),
+      updatedAt: new Date(post.updatedAt),
+    }));
+    setPosts(postsWithDate);
+  };
+
+  // useEffect内で呼び出し
   useEffect(() => {
-    const fetchPosts = async () => {
-      const { data, error } = await supabase
-        .from("posts")
-        .select("*")
-        .order("postDate", { ascending: false });
-
-      if (error) return;
-
-      // ここでDate型に変換
-      const postsWithDate = (data as Post[]).map(post => ({
-        ...post,
-        postDate: new Date(post.postDate),
-        createdAt: new Date(post.createdAt),
-        updatedAt: new Date(post.updatedAt),
-      }));
-      setPosts(postsWithDate);
-    };
-
     fetchPosts();
   }, []);
 
@@ -93,14 +94,7 @@ export default function MyPage() {
     // 投稿成功時の処理（例: 投稿一覧を再取得 or 画面遷移）
   };
 
-  const handleUpdatePost = async (
-    post: Post | Omit<Post, "id" | "createdAt" | "updatedAt">
-  ) => {
-    // id, createdAt, updatedAtがなければ編集できないのでガード
-    if (!("id" in post)) {
-      alert("IDがありません。");
-      return;
-    }
+  const handleUpdatePost = async (post: Post) => {
     const { id, ...updateFields } = post;
     const { error } = await supabase
       .from("posts")
@@ -117,7 +111,7 @@ export default function MyPage() {
     setEditingPost(null);
     setSelectedPost(null);
     // 投稿一覧を再取得
-    // fetchPosts(); ← 必要なら再取得関数を呼ぶ
+    fetchPosts();
   };
 
   return (
@@ -128,11 +122,15 @@ export default function MyPage() {
         <PostComposer
           editingPost={{
             ...editingPost,
-            postDate: typeof editingPost.postDate === "string" ? editingPost.postDate : editingPost.postDate.toISOString(),
-            createdAt: typeof editingPost.createdAt === "string" ? editingPost.createdAt : editingPost.createdAt.toISOString(),
-            updatedAt: typeof editingPost.updatedAt === "string" ? editingPost.updatedAt : editingPost.updatedAt.toISOString(),
+            postDate: editingPost.postDate instanceof Date ? editingPost.postDate.toISOString() : editingPost.postDate,
+            createdAt: editingPost.createdAt instanceof Date ? editingPost.createdAt.toISOString() : editingPost.createdAt,
+            updatedAt: editingPost.updatedAt instanceof Date ? editingPost.updatedAt.toISOString() : editingPost.updatedAt
           }}
-          onSave={handleUpdatePost}
+          onSave={async (post) => {
+            if ('id' in post) {
+              await handleUpdatePost(post as Post);
+            }
+          }}
           onCancel={() => setEditingPost(null)}
         />
       ) : selectedPost ? (
@@ -143,7 +141,7 @@ export default function MyPage() {
             createdAt: selectedPost.createdAt instanceof Date ? selectedPost.createdAt : new Date(selectedPost.createdAt), 
             updatedAt: selectedPost.updatedAt instanceof Date ? selectedPost.updatedAt : new Date(selectedPost.updatedAt)
           }}
-          onEdit={( /* post */ ) => {/* 編集機能は後で実装 */}}
+          onEdit={post => setEditingPost(post)}
           onDelete={( /* postId */ ) => {/* 削除機能は後で実装 */}}
           onBack={() => setSelectedPost(null)}
         />
