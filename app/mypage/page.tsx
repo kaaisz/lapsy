@@ -8,6 +8,7 @@ import { Timeline } from "@/app/components/Timeline";
 import { supabase } from "@/lib/supabaseClient";
 import { useEffect, useState } from "react";
 import { PostComposer } from "@/app/components/PostComposer";
+import * as PostDetail from "@/app/components/PostDetail";
 
 type Post = {
   id: string;
@@ -22,6 +23,7 @@ export default function MyPage() {
   const { session, loading }: { session: Session | null, loading: boolean } = useSession() as { session: Session | null, loading: boolean };
 
   const [posts, setPosts] = useState<Post[]>([]);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -94,25 +96,41 @@ export default function MyPage() {
     <div>
       <Header />
       <h1>マイページ</h1>
-      <PostComposer
-        editingPost={undefined} // ← ここをundefinedまたはnullにする
-        onSave={handleCreatePost}
-        onCancel={handleCancel}
-      />
-      <ul>
-        {posts.map((post) => (
-          <li key={post.id}>{post.content}</li>
-        ))}
-      </ul>
-      <Timeline
-        posts={posts.map(post => ({
-          ...post,
-          postDate: post.postDate instanceof Date ? post.postDate : new Date(post.postDate),
-          createdAt: post.createdAt instanceof Date ? post.createdAt : new Date(post.createdAt),
-          updatedAt: post.updatedAt instanceof Date ? post.updatedAt : new Date(post.updatedAt),
-        }))}
-        onSelectPost={(post) => alert(post.content)}
-      />
+      {selectedPost ? (
+        <PostDetail.PostDetail
+          post={{
+            ...selectedPost,
+            postDate: selectedPost.postDate instanceof Date ? selectedPost.postDate : new Date(selectedPost.postDate),
+            createdAt: selectedPost.createdAt instanceof Date ? selectedPost.createdAt : new Date(selectedPost.createdAt), 
+            updatedAt: selectedPost.updatedAt instanceof Date ? selectedPost.updatedAt : new Date(selectedPost.updatedAt)
+          }}
+          onEdit={(post) => {/* 編集機能は後で実装 */}}
+          onDelete={(postId) => {/* 削除機能は後で実装 */}}
+          onBack={() => setSelectedPost(null)}
+        />
+      ) : (
+        <>
+          <PostComposer
+            editingPost={undefined}
+            onSave={handleCreatePost}
+            onCancel={handleCancel}
+          />
+          <ul>
+            {posts.map((post) => (
+              <li key={post.id}>{post.content}</li>
+            ))}
+          </ul>
+          <Timeline
+            posts={posts.map(post => ({
+              ...post,
+              postDate: post.postDate instanceof Date ? post.postDate : new Date(post.postDate),
+              createdAt: post.createdAt instanceof Date ? post.createdAt : new Date(post.createdAt),
+              updatedAt: post.updatedAt instanceof Date ? post.updatedAt : new Date(post.updatedAt),
+            }))}
+            onSelectPost={setSelectedPost}
+          />
+        </>
+      )}
     </div>
   );
 }
