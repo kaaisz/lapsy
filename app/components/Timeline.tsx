@@ -1,8 +1,7 @@
 import { Card } from "./ui/card";
-// import { Badge } from "./ui/badge";
-// import { formatDistanceToNow, format, isSameDay } from "date-fns";
-// import { ja } from "date-fns/locale";
-import { isSameDay } from "date-fns";
+import { Badge } from "./ui/badge";
+import { formatDistanceToNow, format, isSameDay } from "date-fns";
+import { ja } from "date-fns/locale";
 import { Clock } from "lucide-react";
 type Post = {
   id: string;
@@ -89,7 +88,30 @@ export function Timeline({ posts, onSelectPost }: TimelineProps) {
                 className="p-6 cursor-pointer hover:shadow-md transition-shadow"
                 onClick={() => onSelectPost(post)}
               >
-                <p>{post.content}</p>
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <Badge variant="outline" className="rounded-full text-xs">
+                      {formatDistanceToNow(post.postDate, { 
+                        addSuffix: true, 
+                        locale: ja 
+                      })}
+                    </Badge>
+                    <div className="text-xs text-neutral-gray">
+                      {post.postDate.toLocaleTimeString('ja-JP', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </div>
+                  </div>
+                  <p className="leading-relaxed">{post.content}</p>
+                </div>
+                
+                {post.createdAt.getTime() !== post.updatedAt.getTime() && (
+                  <div className="text-xs text-neutral-gray flex items-center">
+                    <div className="w-1 h-1 rounded-full bg-salmon-pink mr-2"></div>
+                    編集済み
+                  </div>
+                )}
               </Card>
             ))}
           </div>
