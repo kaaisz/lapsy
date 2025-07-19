@@ -2,7 +2,7 @@ import { Card } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { formatDistanceToNow, format, isSameDay } from "date-fns";
 import { ja } from "date-fns/locale";
-import { Clock, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 type Post = {
   id: string;
   content: string;
