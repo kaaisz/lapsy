@@ -61,7 +61,8 @@ export default function MyPage() {
   };
 
   const handleCreatePost = async (postData: Post | Omit<Post, "id" | "createdAt" | "updatedAt">) => {
-    const { data, error } = await supabase
+    // const { data, error } = await supabase
+    const { error } = await supabase
       .from("posts")
       .insert([
         {
