@@ -51,12 +51,15 @@ export default function MyPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
         <Header />
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-neon-lime mx-auto mb-4"></div>
-            <p className="text-muted-foreground">読み込み中...</p>
+        <div className="flex items-center justify-center min-h-[70vh]">
+          <div className="text-center space-y-4">
+            <div className="relative">
+              <div className="animate-spin rounded-full h-12 w-12 border-2 border-neon-lime/20 border-t-neon-lime mx-auto"></div>
+              <div className="absolute inset-0 animate-pulse rounded-full h-12 w-12 bg-neon-lime/10"></div>
+            </div>
+            <p className="text-muted-foreground font-medium">読み込み中...</p>
           </div>
         </div>
       </div>
@@ -133,12 +136,18 @@ export default function MyPage() {
 
   return (
     <AuthGuard>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/10">
         <Header />
         
-        <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Background decorative elements */}
+        <div className="fixed inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 -left-1/4 w-96 h-96 bg-neon-lime/5 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 -right-1/4 w-96 h-96 bg-salmon-pink/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        </div>
+        
+        <main className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {editingPost ? (
-            <div className="max-w-2xl mx-auto">
+            <div className="max-w-3xl mx-auto animate-fade-in">
               <PostComposer
                 editingPost={{
                   ...editingPost!,
@@ -151,7 +160,7 @@ export default function MyPage() {
               />
             </div>
           ) : selectedPost ? (
-            <div className="max-w-2xl mx-auto">
+            <div className="max-w-3xl mx-auto animate-fade-in">
               <PostDetail.PostDetail
                 post={{
                   ...selectedPost,
@@ -165,18 +174,45 @@ export default function MyPage() {
               />
             </div>
           ) : (
-            <div className="max-w-2xl mx-auto space-y-8">
-              <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold text-foreground mb-2">
-                  マイページ
-                </h1>
-                <p className="text-muted-foreground">
-                  あなたの思いを投稿しましょう
-                </p>
+            <div className="max-w-3xl mx-auto space-y-12 animate-fade-in">
+              {/* Hero Section */}
+              <div className="text-center space-y-6 py-8">
+                <div className="space-y-4">
+                  <h1 className="text-4xl font-bold text-foreground gradient-text">
+                    マイページ
+                  </h1>
+                  <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                    あなたの思いを投稿して、日々の記録を残しましょう
+                  </p>
+                </div>
+                
+                {/* Stats Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
+                  <div className="glass-effect rounded-2xl p-6 text-center">
+                    <div className="text-2xl font-bold text-neon-lime">{posts.length}</div>
+                    <div className="text-sm text-muted-foreground">総投稿数</div>
+                  </div>
+                  <div className="glass-effect rounded-2xl p-6 text-center">
+                    <div className="text-2xl font-bold text-salmon-pink">
+                      {posts.filter(p => p.createdAt.toString() !== p.updatedAt.toString()).length}
+                    </div>
+                    <div className="text-sm text-muted-foreground">編集済み</div>
+                  </div>
+                  <div className="glass-effect rounded-2xl p-6 text-center">
+                    <div className="text-2xl font-bold text-neutral-gray">
+                      {new Set(posts.map(p => new Date(p.postDate).toDateString())).size}
+                    </div>
+                    <div className="text-sm text-muted-foreground">投稿日数</div>
+                  </div>
+                </div>
               </div>
               
               {/* 投稿作成フォーム */}
-              <div className="bg-card border border-border rounded-lg p-6 shadow-sm">
+              <div className="glass-effect rounded-3xl p-8 shadow-premium border border-border/50 backdrop-blur-xl">
+                <div className="mb-6">
+                  <h2 className="text-xl font-semibold text-foreground mb-2">新しい投稿</h2>
+                  <p className="text-muted-foreground">今日のできごとや思いを記録しましょう</p>
+                </div>
                 <PostComposer
                   editingPost={undefined}
                   onSave={handleCreatePost}
@@ -184,30 +220,29 @@ export default function MyPage() {
                 />
               </div>
 
-              {/* 投稿一覧（デバッグ用簡易表示） */}
-              {posts.length > 0 && (
-                <div className="bg-card border border-border rounded-lg p-4 shadow-sm">
-                  <h3 className="font-medium text-foreground mb-3">投稿一覧 ({posts.length}件)</h3>
-                  <ul className="space-y-2">
-                    {posts.map((post) => (
-                      <li key={post.id} className="text-sm text-muted-foreground truncate">
-                        {post.content}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
               {/* タイムライン */}
-              <Timeline
-                posts={posts.map(post => ({
-                  ...post,
-                  postDate: post.postDate instanceof Date ? post.postDate : new Date(post.postDate),
-                  createdAt: post.createdAt instanceof Date ? post.createdAt : new Date(post.createdAt),
-                  updatedAt: post.updatedAt instanceof Date ? post.updatedAt : new Date(post.updatedAt),
-                }))}
-                onSelectPost={setSelectedPost}
-              />
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-2xl font-semibold text-foreground">タイムライン</h2>
+                  {posts.length > 0 && (
+                    <div className="text-sm text-muted-foreground">
+                      {posts.length}件の投稿
+                    </div>
+                  )}
+                </div>
+                
+                <div className="glass-effect rounded-3xl border border-border/50 backdrop-blur-xl overflow-hidden">
+                  <Timeline
+                    posts={posts.map(post => ({
+                      ...post,
+                      postDate: post.postDate instanceof Date ? post.postDate : new Date(post.postDate),
+                      createdAt: post.createdAt instanceof Date ? post.createdAt : new Date(post.createdAt),
+                      updatedAt: post.updatedAt instanceof Date ? post.updatedAt : new Date(post.updatedAt),
+                    }))}
+                    onSelectPost={setSelectedPost}
+                  />
+                </div>
+              </div>
             </div>
           )}
         </main>
