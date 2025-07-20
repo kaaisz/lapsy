@@ -136,7 +136,7 @@ export default function LoginPage() {
               aria-describedby="email-hint"
               required
             />
-            <div id="username-hint" className="sr-only">
+            <div id="email-hint" className="sr-only">
               Emailは3文字以上で入力してください
             </div>
             {/* Password field */}

@@ -4,6 +4,10 @@ import AuthGuard from "../components/AuthGuard";
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabaseClient"
+import { Card } from "../components/ui/card"
+import { Input } from "../components/ui/input"
+import { Button } from "../components/ui/button"
+import { Lock, Eye, EyeOff, Mail } from "lucide-react"
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -11,10 +15,42 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [info, setInfo] = useState("")
+  const [errors, setErrors] = useState<{
+    email?: string;
+    password?: string;
+    form?: string;
+  }>({});
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
+  const validateForm = () => {
+    const newErrors: { email?: string; password?: string } =
+      {};
+
+    if (!email.trim()) {
+      newErrors.email = "Emailは必須です";
+    } else if (email.length < 3) {
+      newErrors.email =
+        "Emailは3文字以上で入力してください";
+    }
+
+    if (!password.trim()) {
+      newErrors.password = "パスワードは必須です";
+    } else if (password.length < 6) {
+      newErrors.password =
+        "パスワードは6文字以上で入力してください";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!validateForm()) {
+      return;
+    }
+
     setLoading(true)
     setError("")
     setInfo("")
@@ -53,43 +89,110 @@ export default function RegisterPage() {
       setLoading(false)
       return
     }
+
   }
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const hasFormErrors =
+  errors.email || errors.password || errors.form;
 
   return (
     <AuthGuard>
       <div className="max-w-md mx-auto mt-10 p-4 border rounded">
-        <h1 className="text-xl font-bold mb-4">新規登録</h1>
-        <form onSubmit={handleRegister} className="space-y-4">
-          <div>
-            <label className="block mb-1">メールアドレス</label>
-            <input
+        <Card>
+          <h1 className="text-xl font-bold mb-4">新規登録</h1>
+          <form onSubmit={handleRegister} className="space-y-4">
+            {/* Username field */}
+            {/* <label className="block mb-1">メールアドレス</label> */}
+            <Input
               type="email"
+              label="メールアドレス"
+              placeholder="メールアドレスを入力"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full border px-3 py-2 rounded"
+              error={errors.email}
+              autoComplete="email"
+              icon={
+                <Mail className="w-4 h-4 text-muted-foreground" />
+              }
+              aria-describedby="email-hint"
+              // className="w-full border px-3 py-2 rounded"
               required
             />
+            <div id="email-hint" className="sr-only">
+              Emailは3文字以上で入力してください
+            </div>
+            {/* Password field */}
+            <div className="space-y-2">
+              {/* <label className="block mb-1">パスワード</label> */}
+              <Input
+                type={showPassword ? "text" : "password"}
+                label="パスワード"
+                placeholder="パスワードを入力"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                error={errors.password}
+                required
+                autoComplete="current-password"
+                icon={
+                  <Lock className="w-4 h-4 text-muted-foreground" />
+                }
+                aria-describedby="password-hint"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={togglePasswordVisibility}
+                className="ml-auto flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+                aria-label={
+                  showPassword
+                    ? "パスワードを隠す"
+                    : "パスワードを表示"
+                }
+              >
+                {showPassword ? (
+                  <>
+                    <EyeOff className="w-4 h-4" />
+                    パスワードを隠す
+                  </>
+                ) : (
+                  <>
+                    <Eye className="w-4 h-4" />
+                    パスワードを表示
+                  </>
+                )}
+              </Button>
+              <div id="password-hint" className="sr-only">
+                パスワードは6文字以上で入力してください
+              </div>
+            </div>
+            {/* {error && <p className="text-red-500 sr-only">{error}</p>}
+            {info && <p className="text-blue-600 sr-only">{info}</p>} */}
+            <Button
+              type="submit"
+              className="w-full bg-black text-white py-2 rounded disabled:opacity-50"
+              disabled={
+                loading ||
+                !email.trim() ||
+                !password.trim()
+              }
+              loading={loading}
+              loadingText="登録中..."
+              aria-describedby={
+                hasFormErrors ? "form-errors" : undefined
+              }
+            >
+              {loading ? "登録中..." : "新規登録"}
+            </Button>
+          </form>
+          <div className="mt-4 text-center">
+            <a href="/login" className="text-muted-foreground underline">ログインはこちら</a>
           </div>
-          <div>
-            <label className="block mb-1">パスワード</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border px-3 py-2 rounded"
-              required
-            />
-          </div>
-          {error && <p className="text-red-500">{error}</p>}
-          {info && <p className="text-blue-600">{info}</p>}
-          <button
-            type="submit"
-            className="w-full bg-black text-white py-2 rounded disabled:opacity-50"
-            disabled={loading}
-          >
-            {loading ? "登録中..." : "新規登録"}
-          </button>
-        </form>
+        </Card>
       </div>
     </AuthGuard>
   )
