@@ -13,12 +13,11 @@ export default function RegisterPage() {
   const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
-  const [info, setInfo] = useState("")
   const [errors, setErrors] = useState<{
     email?: string;
     password?: string;
     form?: string;
+    general?: string;
   }>({});
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false);
@@ -52,8 +51,7 @@ export default function RegisterPage() {
     }
 
     setLoading(true)
-    setError("")
-    setInfo("")
+    setErrors({})
 
     const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
       email,
@@ -61,7 +59,7 @@ export default function RegisterPage() {
     })
 
     if (signUpError) {
-      setError(signUpError.message)
+      setErrors({ form: signUpError.message })
       setLoading(false)
       return
     }
@@ -78,14 +76,14 @@ export default function RegisterPage() {
           },
         ])
       if (insertError) {
-        setError("プロフィール作成に失敗しました: " + insertError.message)
+        setErrors({ form: "プロフィール作成に失敗しました: " + insertError.message })
         console.error(insertError)
         setLoading(false)
         return
       }
       router.push("/mypage") // 登録成功後にマイページへ遷移
     } else {
-      setInfo("登録は完了しました。認証メールを確認し、メール内のリンクをクリックしてからログインしてください。もしログインできない場合はパスワードリセットもお試しください。")
+      setErrors({ general: "登録は完了しました。認証メールを確認し、メール内のリンクをクリックしてからログインしてください。もしログインできない場合はパスワードリセットもお試しください。" })
       setLoading(false)
       return
     }
@@ -170,8 +168,12 @@ export default function RegisterPage() {
                 パスワードは6文字以上で入力してください
               </div>
             </div>
-            {/* {error && <p className="text-red-500 sr-only">{error}</p>}
-            {info && <p className="text-blue-600 sr-only">{info}</p>} */}
+            {errors.form && (
+              <p className="text-red-500 text-sm">{errors.form}</p>
+            )}
+            {errors.general && (
+              <p className="text-blue-600 text-sm">{errors.general}</p>
+            )}
             <Button
               type="submit"
               className="w-full bg-black text-white py-2 rounded disabled:opacity-50"
