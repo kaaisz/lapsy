@@ -145,7 +145,7 @@ export default function MyPage() {
           <div className="absolute bottom-1/4 -right-1/4 w-96 h-96 bg-salmon-pink/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         </div>
         
-        <main className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <main className="w-full max-w-[560px] mx-auto px-5 sm:px-4">
           {editingPost ? (
             <div className="max-w-3xl mx-auto animate-fade-in">
               <PostComposer
