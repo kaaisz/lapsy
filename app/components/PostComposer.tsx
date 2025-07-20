@@ -151,7 +151,7 @@ export function PostComposer({ editingPost, onSave, onCancel }: PostComposerProp
   const isOverLimit = characterCount > 500;
 
   return (
-    <div className="min-h-screen bg-background" onKeyDown={handleKeyDown}>
+    <div className="bg-background" onKeyDown={handleKeyDown}>
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm border-b border-border">
         <div className="w-full max-w-[560px] mx-auto px-5 sm:px-4 py-4">

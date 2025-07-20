@@ -208,7 +208,7 @@ export default function MyPage() {
               </div>
               
               {/* 投稿作成フォーム */}
-              <div className="glass-effect rounded-3xl p-8 shadow-premium border border-border/50 backdrop-blur-xl">
+              <div className="glass-effect rounded-3xl p-8 shadow-premium border border-border/50 backdrop-blur-xl mb-6">
                 <div className="mb-6">
                   <h2 className="text-xl font-semibold text-foreground mb-2">新しい投稿</h2>
                   <p className="text-muted-foreground">今日のできごとや思いを記録しましょう</p>

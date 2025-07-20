@@ -91,7 +91,7 @@ export function Timeline({ posts, onSelectPost }: TimelineProps) {
                   </div>
                   {/* Date circle with gradient */}
                   <div className="relative">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-neon-lime to-neon-lime-light text-white flex items-center justify-center shadow-lg shadow-neon-lime/30 pulse-glow">
+                    <div className="w-10 h-10 rounded-full bg-neon-lime text-white flex items-center justify-center">
                       <span className="text-sm font-semibold">
                         {format(group.date, 'd')}
                       </span>
@@ -123,7 +123,7 @@ export function Timeline({ posts, onSelectPost }: TimelineProps) {
                 onClick={() => onSelectPost(post)}
               >
                 <div className="space-y-5">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between mb-2">
                     <Badge 
                       variant="outline" 
                       className="rounded-full text-xs font-medium px-3 py-1 
